@@ -1,1 +1,2 @@
-pscyopg2
+psycopg2
+peewee
