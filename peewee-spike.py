@@ -1,9 +1,12 @@
 from peewee import *
 from datetime import date
+from playhouse.migrate import *
+
 
 db = SqliteDatabase('test.db')
 psql_db = PostgresqlDatabase(
     'peewee-spike', host='db', user='postgres', password='postgres')
+migrator = PostgresqlMigrator(psql_db)
 
 
 class Person(Model):
@@ -17,9 +20,14 @@ class Person(Model):
 
 db.connect()
 
+# does not throw if table already exists, only runs if table does not exist
 db.create_tables([Person])
 
-Person.create(name='Bob', birthday=date(1960, 1, 15), favourite_color='blue')
+# migrate(
+#     migrator.add_column('person', 'favourite_color', CharField(null=True))) # throws if table already exists
+
+Person.create(name='Bob', birthday=date(
+    1960, 1, 15), favourite_color='blue')
 
 bob = Person.select().where(Person.name == 'Bob').get()
 
